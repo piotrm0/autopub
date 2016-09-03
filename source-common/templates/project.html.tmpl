@@ -1,0 +1,34 @@
+<html>
+<head>
+<title><TMPL_VAR NAME=sitetitle />: <TMPL_VAR NAME=name /></title>
+<TMPL_INCLUDE NAME="piece_head.html.tmpl">
+</head>
+<body>
+<div class="page_container">
+  
+<table class="author_info">
+<tr>
+  <td class="author_left">
+    <img class="author_portrait" src="<TMPL_VAR NAME=icon />"/>
+  </td>
+  <td class="author_right">
+    <h3><TMPL_VAR NAME=name /></h3>
+    
+    <br/>
+
+    <b>Keywords: </b>
+    <TMPL_INCLUDE NAME="piece_keywords_list.html.tmpl"/>
+  
+    <br/><br/>
+    
+    <TMPL_INCLUDE NAME="piece_authors_bar.html.tmpl"/>
+    
+  </td>
+</tr>
+</table>
+
+<TMPL_INCLUDE NAME="piece_papers_list.html.tmpl"/>
+
+</div>
+</body>
+</html>

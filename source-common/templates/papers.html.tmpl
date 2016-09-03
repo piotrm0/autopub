@@ -1,0 +1,29 @@
+<html>
+<head>
+<TMPL_INCLUDE NAME="piece_head.html.tmpl">
+<title><TMPL_VAR NAME=sitetitle />: Recent papers</title>
+</head>
+<body>
+<div class="page_container">
+<h3>Recent papers</h3>
+<br/>
+<a href="<tmpl_var name=root>/all_papers.html">see all papers</a>
+<br/><br/>
+
+<!--<b>Projects: </b>
+<TMPL_INCLUDE NAME="piece_projects_list.html.tmpl"/>
+
+<br/><br/>-->
+
+<b>Keywords: </b>
+<TMPL_INCLUDE NAME="piece_keywords_list.html.tmpl"/>
+
+<br/><br/>
+
+<TMPL_INCLUDE NAME="piece_papers_list.html.tmpl"/>
+
+<br>
+<a href="<TMPL_VAR NAME=root />/all_papers.html">see all papers</a>
+</div>
+</body>
+</html>

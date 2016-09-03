@@ -1,0 +1,37 @@
+<html>
+<head>
+<TMPL_INCLUDE NAME="piece_head.html.tmpl"/>
+<title><TMPL_VAR NAME=sitetitle />: <TMPL_VAR NAME=title /></title>
+</head>
+<body>
+<div class="page_container">
+
+  <TMPL_INCLUDE NAME="piece_paper.html.tmpl"/>
+  <br/>
+
+  <!--<b>Projects: </b>
+  <TMPL_INCLUDE NAME="piece_projects_list.html.tmpl"/>
+
+  <br/><br/>-->
+
+  <b>Keywords: </b>
+  <TMPL_INCLUDE NAME="piece_keywords_list.html.tmpl"/>
+
+  <br/><br/>
+
+  <TMPL_INCLUDE NAME="piece_authors_bar.html.tmpl"/>
+
+  <br class="clearboth"/><br/>
+
+  <TMPL_IF NAME=_link_doc>
+    [ <a href="<TMPL_VAR NAME=_link_doc />">pdf</a> ]
+  </TMPL_IF>
+  <br/><br/>
+
+  <TMPL_VAR NAME=_abstract />
+  <br/>
+  <pre class="bibtex"><TMPL_VAR name=bibtex /></pre>
+
+</div>
+</body>
+</html>
