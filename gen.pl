@@ -1,13 +1,19 @@
-#my $URL_ROOT = "file://localhost/Users/piotrm/code/autopub/target";
-my $URL_ROOT = "http://www.cs.umd.edu/~piotrm/autopub";
-my $SITE_TITLE = "Piotr Mardziel";
+if (scalar(@ARGV) != 1) {
+  die "Configuration file not specified."
+} else {
+  require $ARGV[0];
+}
 
-my $DIR_TARGET = "autopub";
-my $DIR_SOURCE = "source";
-my $DIR_SOURCE_COMMON = "source-common";
+my $URL_ROOT   = $Autopub::Config::URL_ROOT;
+my $SITE_TITLE = $Autopub::Config::SITE_TITLE;
 
-my $DEFAULT_AUTHOR_ICON = "$URL_ROOT/graphics/author.gif";
-my $DEFAULT_PROJECT_ICON = "$URL_ROOT/graphics/project.png";
+my $DIR_TARGET        = $Autopub::Config::DIR_TARGET;
+my $DIR_SOURCE        = $Autopub::Config::DIR_SOURCE;
+my $DIR_SOURCE_COMMON = $Autopub::Config::DIR_SOURCE_COMMON;
+my $FILE_SOURCE_BIB   = $Autopub::Config::FILE_SOURCE_BIB;
+
+my $DEFAULT_AUTHOR_ICON  = $Autopub::Config::DEFAULT_AUTHOR_ICON;
+my $DEFAULT_PROJECT_ICON = $Autopub::Config::DEFAULT_PROJECT_ICON;
 
 use Text::BibTeX;
 use HTML::Template;
@@ -19,11 +25,11 @@ use strict;
 setup_dirs();
 my $all = compile_entries();
 my @files = (@{gen_page_all_papers($all)},
-             @{gen_page_recent_papers($all)},
+#             @{gen_page_recent_papers($all)},
              @{gen_piece_summary($all)},
              @{gen_pages_paper($all)},
-             @{gen_pages_author($all)},
-             @{gen_pages_generic("project.html.tmpl", "$DIR_TARGET/projects", $all->{projects})},
+#             @{gen_pages_author($all)},
+#             @{gen_pages_generic("project.html.tmpl", "$DIR_TARGET/projects", $all->{projects})},
              @{gen_pages_generic("keyword.html.tmpl", "$DIR_TARGET/keywords", $all->{keywords})},
              @{gen_page_template("style.css.tmpl", "$DIR_TARGET/style.css")},
              @{gen_page_template("style_include.css.tmpl", "$DIR_TARGET/style_include.css")},
@@ -33,6 +39,18 @@ foreach my $pair (@files) {
   my $filename = $pair->{filename};
   my $content = $pair->{content};
   write_file($filename, $content);
+}
+
+sub rel_url {
+  my ($loc) = @_;
+
+  if ($URL_ROOT eq "") {
+    return $loc;
+  } elsif ($URL_ROOT =~ m/^.+\/$/) {
+    return $URL_ROOT . $loc;
+  } else {
+    return $URL_ROOT . "/" . $loc;
+  }
 }
 
 sub run_cmd {
@@ -66,7 +84,10 @@ sub setup_dirs {
   my @dirs = ($DIR_TARGET,
               map {"$DIR_TARGET/$_/"}
               ("documents", "graphics",
-               "papers", "authors", "keywords", "projects"));
+#               "papers", "authors",
+               "keywords",
+#               "projects"
+              ));
 
   foreach my $dir (@dirs) {
     if (! -e $dir) {
@@ -81,13 +102,13 @@ sub setup_dirs {
 }
 
 sub compile_entries {
-  my $bibsrc = "$DIR_SOURCE/source.bib";
+  my $bibsrc  = $FILE_SOURCE_BIB;
 
   my $bibfile = new Text::BibTeX::File $bibsrc or die "$bibsrc: $!\n";
 
-  my $entries = {};
+  my $entries  = {};
   my $keywords = {};
-  my $authors = {};
+  my $authors  = {};
   my $projects = {};
 
   my @rest;
@@ -165,11 +186,11 @@ sub get_template {
   my ($name) = @_;
   my $template = HTML::Template->new(filename => "$DIR_SOURCE_COMMON/templates/$name",
                                      die_on_bad_params => 0,
-                                     global_vars => 1,
+                                     global_vars       => 1,
                                      loop_context_vars => 1,
                                     );
 
-  $template->param(root => $URL_ROOT,
+  $template->param(root      => $URL_ROOT,
                    sitetitle => $SITE_TITLE,
                   );
 
@@ -177,18 +198,18 @@ sub get_template {
   return $template;
 }
 
-my $month_order = {"january" => 1,
-                   "february" => 2,
-                   "march" => 3,
-                   "april" => 4,
-                   "may" => 5,
-                   "june" => 6,
-                   "july" => 7,
-                   "august" => 8,
+my $month_order = {"january"   => 1,
+                   "february"  => 2,
+                   "march"     => 3,
+                   "april"     => 4,
+                   "may"       => 5,
+                   "june"      => 6,
+                   "july"      => 7,
+                   "august"    => 8,
                    "september" => 9,
-                   "october" => 10,
-                   "november" => 11,
-                   "december" => 12};
+                   "october"   => 10,
+                   "november"  => 11,
+                   "december"  => 12};
 
 sub cmp_months {
   return lc($month_order->{$a}) <=> lc($month_order->{$b});
@@ -367,7 +388,7 @@ sub gen_page_recent_papers {
 
   my $template = get_template("papers.html.tmpl");
 
-  my $temp = {"papers_list" => [values %$entries],
+  my $temp = {"papers_list"   => [values %$entries],
               "keywords_list" => [values %$keywords],
               "projects_list" => [values %$projects],
              };
@@ -384,13 +405,13 @@ sub gen_page_recent_papers {
 sub gen_piece_summary {
   my ($all) = @_;
 
-  my $entries = $all->{entries} or die();
+  my $entries  = $all->{entries}  or die();
   my $keywords = $all->{keywords} or die();
   my $projects = $all->{projects} or die();
 
   my $template = get_template("page_piece_summary.html.tmpl");
 
-  my $temp = {"papers_list" => [values %$entries],
+  my $temp = {"papers_list"   => [values %$entries],
               "keywords_list" => [values %$keywords],
               "projects_list" => [values %$projects],
              };
@@ -400,19 +421,19 @@ sub gen_piece_summary {
   $template->param(%$temp);
 
   return [{filename => "$DIR_TARGET/summary.shtml",
-           content => $template->output()}];
+           content  => $template->output()}];
 }
 
 sub gen_page_all_papers {
   my ($all) = @_;
 
-  my $entries = $all->{entries} or die();
+  my $entries  = $all->{entries}  or die();
   my $keywords = $all->{keywords} or die();
   my $projects = $all->{projects} or die();
 
   my $template = get_template("all_papers.html.tmpl");
 
-  my $temp = {"papers_list" => [values %$entries],
+  my $temp = {"papers_list"   => [values %$entries],
               "keywords_list" => [values %$keywords],
               "projects_list" => [values %$projects],
              };
@@ -459,8 +480,8 @@ sub hash_of_entry {
     $ret->{$key} = $entry->get($key);
   }
 
-  $ret->{entry} = $entry;
-  $ret->{key} = $entry->key;
+  $ret->{entry}    = $entry;
+  $ret->{key}      = $entry->key;
   $ret->{linkname} = linkname_of_name($ret->{key});
 
   return $ret;
@@ -471,7 +492,7 @@ sub hash_of_paper_entry {
 
   my $ret = hash_of_entry($entry);
 
-  $ret->{authors_list} = [map {hash_of_paper_author($authors, $_)} $entry->split('author')];
+  $ret->{authors_list}  = [map {hash_of_paper_author($authors, $_)} $entry->split('author')];
   $ret->{keywords_list} = [map {hash_of_paper_keyword($keywords, $_)} (split(/\s*,\s*/, $entry->get('_keywords')))];
   $ret->{projects_list} = [map {hash_of_paper_project($projects, $_)} (split(/\s*,\s*/, $entry->get('_projects')))];
 
@@ -508,7 +529,7 @@ sub hash_of_paper_entry {
 
   if (! defined $ret->{_link_doc}) {
     if (-e "$DIR_TARGET/documents/$ret->{key}.pdf") {
-      $ret->{_link_doc} = "$URL_ROOT/documents/$ret->{key}.pdf";
+      $ret->{_link_doc} = url_rel("documents/$ret->{key}.pdf");
     } else {
       $ret->{_link_doc} = 0;
     }
@@ -523,7 +544,6 @@ sub find_author {
   foreach my $author (values %$authors) {
     if ($author->{name} eq $name) {
       return $author;
-
     }
   }
 

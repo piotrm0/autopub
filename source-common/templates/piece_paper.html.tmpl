@@ -6,7 +6,7 @@
 </TMPL_IF>
 <TMPL_IF NAME=__COUNTER__><td class="paper_refnum">[<TMPL_VAR name=__COUNTER__>]</td></TMPL_IF>
 <td class="paper_info">
-<b><a href="<TMPL_VAR NAME=root>/papers/<TMPL_VAR NAME=key>.html"><TMPL_VAR NAME=title></a></b>.<br/>
+<b><a href="<TMPL_VAR NAME=root />papers/<TMPL_VAR NAME=key>.html"><TMPL_VAR NAME=title></a></b>.<br/>
 <font size="-1"><TMPL_LOOP NAME=authors_list><TMPL_INCLUDE name=piece_author_link_plain.html.tmpl><TMPL_UNLESS name=__LAST__>, </TMPL_UNLESS></TMPL_LOOP>.<br/>
 <TMPL_VAR NAME=_venue>.
 <TMPL_VAR NAME=month> <TMPL_VAR NAME=year>.</font><br/>

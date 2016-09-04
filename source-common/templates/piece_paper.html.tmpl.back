@@ -2,21 +2,21 @@
   <div class="project_left_box">
   <TMPL_IF NAME=_project>
     <!--<div class="project_icon_text">
-      <a href="<TMPL_VAR NAME=root>/projects/<TMPL_VAR NAME=_project>.html">
+      <a href="<TMPL_VAR NAME=root />projects/<TMPL_VAR NAME=_project>.html">
         <TMPL_VAR NAME=_project>
       </a> project
     </div>-->
     <img class="project_icon" src="<TMPL_VAR NAME=_icon>"/>
     <div class="project_icon_keywords">
       <TMPL_LOOP NAME=keywords_list>
-        <a class="keyword" href="<TMPL_VAR NAME=root>/keywords/<TMPL_VAR NAME=name>.html"><TMPL_VAR NAME=name></a>
+        <a class="keyword" href="<TMPL_VAR NAME=root />topics/<TMPL_VAR NAME=name>.html"><TMPL_VAR NAME=name></a>
       </TMPL_LOOP>
     </div>
   </TMPL_IF>
   </div>
 
   <div class="paper_top">
-    <div class="paper_title"><a href="<TMPL_VAR NAME=root>/papers/<TMPL_VAR NAME=key>.html"><TMPL_VAR NAME=title></a></div>
+    <div class="paper_title"><a href="<TMPL_VAR NAME=root />papers/<TMPL_VAR NAME=key>.html"><TMPL_VAR NAME=title></a></div>
     <div class="paper_date"><TMPL_VAR NAME=month> <TMPL_VAR NAME=year></div>
     <div class="paper_venue"><TMPL_VAR NAME=_venue></div>
     <TMPL_IF NAME=note><div class="paper_notes">(<TMPL_VAR NAME=note>)</div></TMPL_IF>
