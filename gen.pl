@@ -77,15 +77,15 @@ sub write_file {
 
 sub make_dir {
   my ($dirname) = @_;
-  run_cmd("mkdir $dirname");
+  run_cmd("mkdir -p $dirname");
 }
 
 sub setup_dirs {
   my @dirs = ($DIR_TARGET,
               map {"$DIR_TARGET/$_/"}
               ("documents", "graphics",
-#               "papers", "authors",
                "keywords",
+#               "papers", "authors",
 #               "projects"
               ));
 
