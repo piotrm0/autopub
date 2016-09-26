@@ -24,9 +24,15 @@ use strict;
 
 setup_dirs();
 my $all = compile_entries();
+
+my $papers  = select_entries($all, sub {$_[0]->{'entry'}->type ne "techreport"});
+my $reports = select_entries($all, sub {$_[0]->{'entry'}->type eq "techreport"});
+
 my @files = (@{gen_page_all_papers($all)},
 #             @{gen_page_recent_papers($all)},
-             @{gen_piece_summary($all)},
+             @{gen_piece_papers($papers,"papers")},
+             @{gen_piece_papers($reports,"tech-reports")},
+             @{gen_piece_topics($all,"topics")},
              @{gen_pages_paper($all)},
 #             @{gen_pages_author($all)},
 #             @{gen_pages_generic("project.html.tmpl", "$DIR_TARGET/projects", $all->{projects})},
@@ -398,12 +404,12 @@ sub gen_page_recent_papers {
   $template->param(%$temp);
 
   return [{filename => "$DIR_TARGET/papers.html",
-           content => $template->output()
+           content  => $template->output()
           }];
 }
 
-sub gen_piece_summary {
-  my ($all) = @_;
+sub gen_piece_papers {
+  my ($all, $output) = @_;
 
   my $entries  = $all->{entries}  or die();
   my $keywords = $all->{keywords} or die();
@@ -420,7 +426,29 @@ sub gen_piece_summary {
 
   $template->param(%$temp);
 
-  return [{filename => "$DIR_TARGET/summary.shtml",
+  return [{filename => "$DIR_TARGET/$output.shtml",
+           content  => $template->output()}];
+}
+
+sub gen_piece_topics {
+  my ($all, $output) = @_;
+
+  my $entries  = $all->{entries}  or die();
+  my $keywords = $all->{keywords} or die();
+  my $projects = $all->{projects} or die();
+
+  my $template = get_template("page_piece_topics.html.tmpl");
+
+  my $temp = {"papers_list"   => [values %$entries],
+              "keywords_list" => [values %$keywords],
+              "projects_list" => [values %$projects],
+             };
+
+  sort_lists($temp);
+
+  $template->param(%$temp);
+
+  return [{filename => "$DIR_TARGET/$output.shtml",
            content  => $template->output()}];
 }
 
@@ -444,6 +472,28 @@ sub gen_page_all_papers {
 
   return [{filename => "$DIR_TARGET/all_papers.html",
            content => $template->output()}];
+}
+
+sub select_entries {
+  my ($all, $f) = @_;
+
+  my $entries = {%{$all->{'entries'}}};
+
+  my $temp = {};
+
+  foreach my $k (keys %$entries) {
+    my $e = $entries->{$k};
+    #print "entry = " . $e->{'entry'}->type . "\n";
+    if ($f->($e)) {
+      $temp->{$k} = $e;
+    }
+  }
+
+  my $ret = {'entries'  => $temp,
+             'keywords' => {%{$all->{'keywords'}}},
+             'projects' => {%{$all->{'projects'}}}};
+
+  return $ret;
 }
 
 sub hash_of_author_entry {
